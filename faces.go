@@ -41,6 +41,11 @@ type Collidable interface {
 	CollisionFace
 }
 
+type Spaceable interface {
+	BasicFace
+	SpaceFace
+}
+
 type Moveable interface {
 	BasicFace
 	SpaceFace

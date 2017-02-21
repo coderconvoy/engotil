@@ -1,13 +1,6 @@
 package engotil
 
-import (
-	"image/color"
-	"testing"
-
-	"engo.io/ecs"
-	"engo.io/engo/common"
-)
-
+/*
 type Anime struct {
 	Basic
 }
@@ -26,4 +19,4 @@ func Test_Add(t *testing.T) {
 
 	a.AddByInterface(k)
 
-}
+}*/

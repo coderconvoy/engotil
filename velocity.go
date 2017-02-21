@@ -8,7 +8,7 @@ import (
 
 type VelocityComponent struct {
 	engo.Point
-	friction float32
+	Friction float32
 }
 
 func (vc *VelocityComponent) Push(f engo.Point) {
@@ -37,7 +37,7 @@ func (vs *VelocitySystem) Add(ob Velocitable) {
 func (vs *VelocitySystem) Update(d float32) {
 	for _, o := range vs.obs {
 		vc := o.GetVelocityComponent()
-		vc.Point.MultiplyScalar(1 - (vc.friction * d))
+		vc.Point.MultiplyScalar(1 - (vc.Friction * d))
 
 		sc := o.GetSpaceComponent()
 		sc.Position.X += vc.X
