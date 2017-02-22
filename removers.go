@@ -1,7 +1,7 @@
 package engotil
 
 func RemoveCollidable(sl []Collidable, b IDable) []Collidable {
-	id = b.ID()
+	id := b.ID()
 	dp := -1
 	for i, v := range sl {
 		if v.ID() == id {
@@ -15,7 +15,7 @@ func RemoveCollidable(sl []Collidable, b IDable) []Collidable {
 	return sl
 }
 func RemoveSpaceable(sl []Spaceable, b IDable) []Spaceable {
-	id = b.ID()
+	id := b.ID()
 	dp := -1
 	for i, v := range sl {
 		if v.ID() == id {
@@ -29,7 +29,7 @@ func RemoveSpaceable(sl []Spaceable, b IDable) []Spaceable {
 	return sl
 }
 func RemoveAnimatable(sl []Animatable, b IDable) []Animatable {
-	id = b.ID()
+	id := b.ID()
 	dp := -1
 	for i, v := range sl {
 		if v.ID() == id {
@@ -43,7 +43,7 @@ func RemoveAnimatable(sl []Animatable, b IDable) []Animatable {
 	return sl
 }
 func RemoveMoveable(sl []Moveable, b IDable) []Moveable {
-	id = b.ID()
+	id := b.ID()
 	dp := -1
 	for i, v := range sl {
 		if v.ID() == id {
