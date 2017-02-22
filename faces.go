@@ -6,6 +6,9 @@ import (
 )
 
 //Engo
+type IDable interface {
+	ID() uint64
+}
 type BasicFace interface {
 	GetBasicEntity() *ecs.BasicEntity
 	ID() uint64
