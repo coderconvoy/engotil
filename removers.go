@@ -1,4 +1,4 @@
-package play
+package engotil
 
 func RemoveCollidable(sl []Collidable, b IDable) []Collidable {
 	id = b.ID()
