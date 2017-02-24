@@ -1,5 +1,19 @@
 package engotil
 
+func RemoveGCollisionable(sl []GCollisionable, b IDable) []GCollisionable {
+	id := b.ID()
+	dp := -1
+	for i, v := range sl {
+		if v.ID() == id {
+			dp = i
+			break
+		}
+	}
+	if dp >= 0 {
+		return append(sl[:dp], sl[dp+1:]...)
+	}
+	return sl
+}
 func RemoveCollidable(sl []Collidable, b IDable) []Collidable {
 	id := b.ID()
 	dp := -1

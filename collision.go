@@ -9,7 +9,7 @@ import (
 type GCollisionComponent struct {
 	Main     bool
 	Extra    engo.Point
-	Collides Bool
+	Collides bool
 	Group    byte
 }
 
@@ -21,13 +21,13 @@ func (gc *GCollisionComponent) Grp() byte {
 }
 
 type GCollisionMessage struct {
-	Main  Collidable
-	Buddy Collidable
+	Main  GCollisionable
+	Buddy GCollisionable
 }
 
 //Use this bitmask for defining collision groups
 const (
-	C_GRP1 = 1 << i
+	C_GRP1 = 1 << iota
 	C_GRP2
 	C_GRP3
 	C_GRP4
@@ -40,21 +40,21 @@ const (
 func (GCollisionMessage) Type() string { return "GCollisionMessage" }
 
 type GCollisionSystem struct {
-	entities []Collidable
+	entities []GCollisionable
 	Solids   byte
 }
 
-func (c *GCollisionSystem) Add(ob GCollisionAble) {
-	c.entities = append(c.entities, ob)
+func (cs *GCollisionSystem) Add(ob GCollisionable) {
+	cs.entities = append(cs.entities, ob)
 }
 
-func (c *GCollisionSystem) Remove(basic ecs.BasicEntity) {
-	c.entities = RemoveCollidable(c.entities, basic)
+func (cs *GCollisionSystem) Remove(basic ecs.BasicEntity) {
+	cs.entities = RemoveGCollisionable(cs.entities, basic)
 }
 
 func (cs *GCollisionSystem) Update(dt float32) {
 	for i1, e1 := range cs.entities {
-		cc1 := e1.GetCollisionComponent()
+		cc1 := e1.GetGCollisionComponent()
 		if !cc1.Main {
 			continue // with other entities
 		}
@@ -73,7 +73,11 @@ func (cs *GCollisionSystem) Update(dt float32) {
 			if i1 == i2 {
 				continue // with other entities, because we won't collide with ourselves
 			}
-			cc2 := e2.GetCollisionComponent()
+			grp := e1.Grp() & e2.Grp()
+			if grp == 0 {
+				continue //Don't compare items not in the same group
+			}
+			cc2 := e2.GetGCollisionComponent()
 			sc2 := e2.GetSpaceComponent()
 
 			otherAABB := sc2.AABB()
@@ -84,7 +88,7 @@ func (cs *GCollisionSystem) Update(dt float32) {
 			otherAABB.Max.Y += offset.Y
 
 			if common.IsIntersecting(entityAABB, otherAABB) {
-				if cc1.Solid && cc2.Solid {
+				if grp&cs.Solids > 0 {
 					mtd := common.MinimumTranslation(entityAABB, otherAABB)
 					sc1.Position.X += mtd.X
 					sc1.Position.Y += mtd.Y
