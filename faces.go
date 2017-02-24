@@ -32,12 +32,23 @@ type CollisionFace interface {
 	GetCollisionComponent() *common.CollisionComponent
 }
 
+type GCollisionFace interface {
+	GetGCollisionComponent() *GCollisionComponent
+	Grp() byte
+}
+
 //My Basic
 type VelocityFace interface {
 	GetVelocityComponent() *VelocityComponent
 }
 
 //Combi
+type GCollisionable interface {
+	BasicFace
+	SpaceFace
+	GCollisionFace
+}
+
 type Collidable interface {
 	BasicFace
 	SpaceFace

@@ -6,26 +6,53 @@ import (
 	"engo.io/engo/common"
 )
 
-type Collision2Message struct {
+type GCollisionComponent struct {
+	Main     bool
+	Extra    engo.Point
+	Collides Bool
+	Group    byte
+}
+
+func (gc *GCollisionComponent) GetGCollisionComponent() *GCollisionComponent {
+	return gc
+}
+func (gc *GCollisionComponent) Grp() byte {
+	return gc.Group
+}
+
+type GCollisionMessage struct {
 	Main  Collidable
 	Buddy Collidable
 }
 
-func (Collision2Message) Type() string { return "Collision2Message" }
+//Use this bitmask for defining collision groups
+const (
+	C_GRP1 = 1 << i
+	C_GRP2
+	C_GRP3
+	C_GRP4
+	C_GRP5
+	C_GRP6
+	C_GRP7
+	C_GRP8
+)
 
-type CollisionSystem struct {
+func (GCollisionMessage) Type() string { return "GCollisionMessage" }
+
+type GCollisionSystem struct {
 	entities []Collidable
+	Solids   byte
 }
 
-func (c *CollisionSystem) Add(ob Collidable) {
+func (c *GCollisionSystem) Add(ob GCollisionAble) {
 	c.entities = append(c.entities, ob)
 }
 
-func (c *CollisionSystem) Remove(basic ecs.BasicEntity) {
+func (c *GCollisionSystem) Remove(basic ecs.BasicEntity) {
 	c.entities = RemoveCollidable(c.entities, basic)
 }
 
-func (cs *CollisionSystem) Update(dt float32) {
+func (cs *GCollisionSystem) Update(dt float32) {
 	for i1, e1 := range cs.entities {
 		cc1 := e1.GetCollisionComponent()
 		if !cc1.Main {
@@ -64,7 +91,7 @@ func (cs *CollisionSystem) Update(dt float32) {
 				}
 
 				collided = true
-				engo.Mailbox.Dispatch(Collision2Message{Main: e1, Buddy: e2})
+				engo.Mailbox.Dispatch(GCollisionMessage{Main: e1, Buddy: e2})
 			}
 		}
 
