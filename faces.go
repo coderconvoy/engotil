@@ -35,6 +35,7 @@ type CollisionFace interface {
 type GCollisionFace interface {
 	GetGCollisionComponent() *GCollisionComponent
 	Grp() byte
+	ColMain() byte
 }
 
 //My Basic

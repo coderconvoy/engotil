@@ -7,17 +7,21 @@ import (
 )
 
 type GCollisionComponent struct {
-	Main     bool
-	Extra    engo.Point
-	Collides bool
-	Group    byte
+	Extra       engo.Point
+	Collides    bool
+	Main, Group byte
 }
 
 func (gc *GCollisionComponent) GetGCollisionComponent() *GCollisionComponent {
 	return gc
 }
+
 func (gc *GCollisionComponent) Grp() byte {
 	return gc.Group
+}
+
+func (gc *GCollisionComponent) ColMain() byte {
+	return gc.Main
 }
 
 type GCollisionMessage struct {
@@ -55,7 +59,7 @@ func (cs *GCollisionSystem) Remove(basic ecs.BasicEntity) {
 func (cs *GCollisionSystem) Update(dt float32) {
 	for i1, e1 := range cs.entities {
 		cc1 := e1.GetGCollisionComponent()
-		if !cc1.Main {
+		if cc1.Main == 0 {
 			continue // with other entities
 		}
 		sc1 := e1.GetSpaceComponent()
@@ -73,7 +77,7 @@ func (cs *GCollisionSystem) Update(dt float32) {
 			if i1 == i2 {
 				continue // with other entities, because we won't collide with ourselves
 			}
-			grp := e1.Grp() & e2.Grp()
+			grp := e1.ColMain() & e2.Grp()
 			if grp == 0 {
 				continue //Don't compare items not in the same group
 			}
