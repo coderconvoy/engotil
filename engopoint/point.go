@@ -19,3 +19,12 @@ func Add(a, b engo.Point) engo.Point {
 		a.Y + b.Y,
 	}
 }
+
+func Addn(pts ...engo.Point) engo.Point {
+	res := &engo.Point{}
+	for _, p := range pts {
+		res.X += p.X
+		res.Y += p.Y
+	}
+	return *res
+}

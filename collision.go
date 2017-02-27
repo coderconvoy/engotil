@@ -1,6 +1,8 @@
 package engotil
 
 import (
+	"math"
+
 	"engo.io/ecs"
 	"engo.io/engo"
 	"engo.io/engo/common"
@@ -123,9 +125,39 @@ func (cs *GCollisionSystem) Update(dt float32) {
 func MinimumStepBack(en, ot engo.AABB, vc *VelocityComponent) engo.Point {
 	//Get Stepped Back based on Velocity
 	enbak := engo.AABB{engopoint.Sub(en.Min, vc.Point), engopoint.Sub(en.Max, vc.Point)}
-	if !common.IsIntersecting(enbak, ot) {
-		return engopoint.Neg(vc.Point)
+	if common.IsIntersecting(enbak, ot) {
+		return engo.Point{}
 	}
-	return engo.Point{}
+
+	//now enbak is old replace
+	var fx, dx, fy, dy float32 = 0, 0, 0, 0 //Fraction of distance
+
+	if vc.X > 0 {
+		dx = ot.Min.X - en.Max.X
+		fx = dx / vc.X
+	}
+	if vc.X < 0 {
+		dx = ot.Max.X - en.Min.X
+		fx = -dx / vc.X
+	}
+	if vc.Y > 0 {
+		dy = ot.Min.Y - en.Max.Y
+		fy = dy / vc.Y
+	}
+	if vc.Y < 0 {
+		dy = ot.Max.Y - en.Min.Y
+		fy = -dy / vc.Y
+	}
+
+	var nLoc engo.Point
+	if math.Abs(float64(fx)) > math.Abs(float64(fy)) {
+		nLoc = engo.Point{vc.X * fy, dy}
+		vc.Y = -vc.Y
+	} else {
+		nLoc = engo.Point{dx, vc.Y * fx}
+		vc.X = -vc.X
+	}
+
+	return engopoint.Addn(enbak.Min, nLoc, engopoint.Neg(en.Min))
 
 }
