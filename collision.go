@@ -4,6 +4,7 @@ import (
 	"engo.io/ecs"
 	"engo.io/engo"
 	"engo.io/engo/common"
+	"github.com/coderconvoy/engotil/engopoint"
 )
 
 type GCollisionComponent struct {
@@ -92,10 +93,22 @@ func (cs *GCollisionSystem) Update(dt float32) {
 			otherAABB.Max.Y += offset.Y
 
 			if common.IsIntersecting(entityAABB, otherAABB) {
+				stepped := false
 				if grp&cs.Solids > 0 {
-					mtd := common.MinimumTranslation(entityAABB, otherAABB)
-					sc1.Position.X += mtd.X
-					sc1.Position.Y += mtd.Y
+					//Try to stepback based on previous velocity
+					vca, ok := e1.(VelocityFace)
+					if ok {
+						step := MinimumStepBack(entityAABB, otherAABB, vca.GetVelocityComponent())
+						p := engo.Point{0, 0}
+						stepped = step != p
+						sc1.Position.Add(step)
+					}
+
+					if !stepped {
+						mtd := common.MinimumTranslation(entityAABB, otherAABB)
+						sc1.Position.X += mtd.X
+						sc1.Position.Y += mtd.Y
+					}
 				}
 
 				collided = true
@@ -105,4 +118,14 @@ func (cs *GCollisionSystem) Update(dt float32) {
 
 		cc1.Collides = collided
 	}
+}
+
+func MinimumStepBack(en, ot engo.AABB, vc *VelocityComponent) engo.Point {
+	//Get Stepped Back based on Velocity
+	enbak := engo.AABB{engopoint.Sub(en.Min, vc.Point), engopoint.Sub(en.Max, vc.Point)}
+	if !common.IsIntersecting(enbak, ot) {
+		return engopoint.Neg(vc.Point)
+	}
+	return engo.Point{}
+
 }
