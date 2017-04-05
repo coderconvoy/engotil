@@ -30,6 +30,7 @@ func (gc *GCollisionComponent) ColMain() byte {
 type GCollisionMessage struct {
 	Main  GCollisionable
 	Buddy GCollisionable
+	Group byte
 }
 
 //Use this bitmask for defining collision groups
@@ -114,7 +115,7 @@ func (cs *GCollisionSystem) Update(dt float32) {
 				}
 
 				collided = true
-				engo.Mailbox.Dispatch(GCollisionMessage{Main: e1, Buddy: e2})
+				engo.Mailbox.Dispatch(GCollisionMessage{Main: e1, Buddy: e2, Group: grp})
 			}
 		}
 
